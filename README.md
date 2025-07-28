@@ -22,13 +22,23 @@ This is a Turborepo-based monorepo containing the following applications:
 
 ## Using This Repository
 
-This repository is designed to be used during interviews to assess frontend developer candidates' skills. You can use it in the following ways:
+This repository is designed as a take-home assessment to evaluate frontend developer candidates' skills. Here's how to proceed:
 
-1. **Live Coding Interview**: Have candidates clone the repository and complete one or more challenges during a live coding session.
+1. **Clone the Repository**: Start by cloning this repository to your local machine.
 
-2. **Take-Home Assessment**: Fork the repository and send it to candidates as a take-home assessment, with specific requirements to complete.
+2. **Create a Branch**: Create a new branch from `main` with a descriptive name (e.g., `candidate-firstname-lastname`).
+   ```bash
+   git checkout -b candidate-firstname-lastname
+   ```
 
-3. **Pair Programming**: Work through one of the challenges together with the candidate during an interview to assess their thinking process and collaboration skills.
+3. **Complete the Challenges**: Work through the challenges in the `apps` directory. Each challenge has its own README.md with specific instructions.
+
+4. **Create a Pull Request**: When you're finished:
+   - Push your branch to the repository
+   - Create a pull request from your branch to `main`
+   - Include a clear description of your changes and any notes about your implementation
+
+**Important**: Make sure to complete all the required challenges and answer any questions in the respective `questions.md` files before submitting your PR.
 
 ## How to Run
 
