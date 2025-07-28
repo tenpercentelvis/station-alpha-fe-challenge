@@ -1,0 +1,17 @@
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-initiated {
+  color: #f59f00;
+}
+
+.status-processed {
+  color: #37b24d;
+}
+
+.status-canceled {
+  color: #f03e3e;
+} 

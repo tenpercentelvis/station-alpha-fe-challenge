@@ -1,0 +1,85 @@
+.app {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app-header {
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.preference-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+section {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.challenge-description h2,
+.examples-section h2,
+.your-solution h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.challenge-description ul {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.challenge-description li {
+  margin-bottom: 0.5rem;
+}
+
+.examples-section {
+  background-color: #f9fafb;
+}
+
+.solution-demo {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  min-height: 150px;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.placeholder-button {
+  padding: 1rem 2rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 9999px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.app-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.875rem;
+} 
