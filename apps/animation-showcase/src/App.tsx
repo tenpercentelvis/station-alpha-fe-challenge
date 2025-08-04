@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import ButtonExample from './components/ButtonExample';
+import ButtonRequirement from './components/ButtonRequirement';
 
 const App: React.FC = () => {
 
@@ -21,7 +21,7 @@ const App: React.FC = () => {
 
         <section className="examples-section">
           <h2>Create this button</h2>
-          <ButtonExample />
+          <ButtonRequirement />
         </section>
 
         <section className="your-solution">

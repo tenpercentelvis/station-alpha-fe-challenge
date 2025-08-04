@@ -20,25 +20,29 @@ This is a Turborepo-based monorepo containing the following applications:
 
 **Important:** Each application directory (`apps/*`) contains its own specific `README.md` file with detailed instructions and context for that particular challenge. Please refer to the README inside the relevant application folder for challenge specifics. Some challenges also include a `questions.md` file that candidates may need to review or answer as part of the assessment.
 
-## Using This Repository
+## Submission Process
 
 This repository is designed as a take-home assessment to evaluate frontend developer candidates' skills. Here's how to proceed:
 
-1. **Clone the Repository**: Start by cloning this repository to your local machine.
+1. **Fork the Repository**: Start by forking this repository to your own GitHub account using the 'Fork' button at the top right.
 
-2. **Create a Branch**: Create a new branch from `main` with a descriptive name (e.g., `candidate-firstname-lastname`).
+2. **Clone Your Fork**: Clone your forked repository to your local machine:
    ```bash
-   git checkout -b candidate-firstname-lastname
+   git clone https://github.com/YOUR_USERNAME/station-alpha-fe-challenge.git
    ```
 
 3. **Complete the Challenges**: Work through the challenges in the `apps` directory. Each challenge has its own README.md with specific instructions.
 
-4. **Create a Pull Request**: When you're finished:
-   - Push your branch to the repository
-   - Create a pull request from your branch to `main`
-   - Include a clear description of your changes and any notes about your implementation
+4. **Push Your Changes**: When you're finished:
+   - Commit all your changes to your fork
+   - Push the changes to your repository
+   - Share the link to your forked repository with us
 
-**Important**: Make sure to complete all the required challenges and answer any questions in the respective `questions.md` files before submitting your PR.
+**Important**: Make sure to:
+- Complete all the required challenges
+- Answer any questions in the respective `questions.md` files
+- Keep your fork public so we can review your code
+- Include any special setup instructions or notes in your repository's README
 
 ## How to Run
 

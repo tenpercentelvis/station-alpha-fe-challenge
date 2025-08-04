@@ -19,19 +19,9 @@ This is a Todo List application with the following features:
 4. Answer the questions in the `questions.md` file
 5. Create a PR with your fixes
 
-## Bugs to Find
+## Task
 
-There are several types of bugs in this application, ranging from simple type errors to logical flaws in state management. You might find that linters (like ESLint) or the TypeScript compiler highlight some issues, while others will require testing the application's behavior and analyzing the code logic.
-
-Look for bugs related to:
-
-- Functionality (the app doesn't work as described)
-- State management (incorrect updates, mutations)
-- Type safety (missing or incorrect types)
-- Component interaction (incorrect props, missing data)
-- Potential performance issues or inefficiencies
-
-Your task is to identify and fix these issues to make the application function correctly according to the feature list.
+Your task is to identify and fix any issues to make the application function correctly according to the feature list above. Test the application thoroughly and ensure it works as expected.
 
 ## Getting Started
 

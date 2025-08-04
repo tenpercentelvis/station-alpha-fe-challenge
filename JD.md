@@ -12,7 +12,7 @@ You will contribute across our product suite, including trading, payments, regis
 - **Build Tools:** Vite, Webpack
 - **Testing:** Playwright, Jest
 - **CI/CD:** Bitbucket Pipelines, Git
-- **Infrastructure:** AWS (Lambda, API Gateway, CodeBuild)
+- **Infrastructure:** AWS (Lambda, API Gateway)
 
 ## Key Responsibilities
 
