@@ -63,9 +63,9 @@ section {
   justify-content: center;
   min-height: 150px;
   align-items: center;
-  background-color: #f3f4f6;
   border-radius: 8px;
   padding: 2rem;
+  gap: 48px;
 }
 
 .placeholder-button {

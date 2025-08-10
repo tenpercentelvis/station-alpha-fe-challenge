@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
+import Button from './components/Button';
 import ButtonRequirement from './components/ButtonRequirement';
+import PlaneIcon from './components/icons/PlaneIcon';
+import TickIcon from './components/icons/TickIcon';
 
 const App: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [buttonText, setButtonText] = useState('Book a flight');
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const handleClick = () => {
+    setLoading(true);
+    setIsCompleted(false);
+    // Reset loading state after a couple seconds (simulate api success)
+    setTimeout(() => {
+      setLoading(false);
+      setIsCompleted(true);
+      // Update the text on success
+      setButtonText('Flight booked');
+ 
+    }, 2000);
+  };
 
   return (
     <div className="app">
@@ -28,8 +47,22 @@ const App: React.FC = () => {
           <h2>Your Solution</h2>
           <p>Implement your animated button component and showcase it below:</p>
           <div className="solution-demo">
-            {/* Replace this comment with your AnimatedButton component */}
-            <div className="placeholder-button">Your button will go here</div>
+            
+            <Button 
+              onClick={handleClick}
+              icon={isCompleted ? <TickIcon /> : <PlaneIcon />}
+              loading={loading}
+              text={buttonText}
+              size="small"
+            />
+
+            <Button 
+              onClick={handleClick}
+              icon={isCompleted ? <TickIcon /> : <PlaneIcon />}
+              loading={loading}
+              text={buttonText}
+              size="large"
+            />
           </div>
         </section>
       </main>

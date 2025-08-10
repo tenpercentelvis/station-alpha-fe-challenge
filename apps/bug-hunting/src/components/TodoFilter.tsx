@@ -1,5 +1,17 @@
-const TodoFilter = ({ filter, onFilter, onClearCompleted }) => {
-  const handleFilterChange = (newFilter) => {
+export enum Filter {
+  All = 'all',
+  Active = 'active',
+  Completed = 'completed'
+}
+
+type TodoFilterProps = {
+  filter: Filter
+  onFilter: (filter: Filter) => void
+  onClearCompleted: () => void
+}
+
+export const TodoFilter = ({ filter, onFilter, onClearCompleted }: TodoFilterProps) => {
+  const handleFilterChange = (newFilter: Filter) => {
     onFilter(newFilter)
   }
   
@@ -7,20 +19,20 @@ const TodoFilter = ({ filter, onFilter, onClearCompleted }) => {
     <div className="todo-filter">
       <div className="filter-buttons">
         <button 
-          className={filter === "all" && "active"} 
-          onClick={() => handleFilterChange("all")}
+          className={filter === Filter.All ? "active" : ""} 
+          onClick={() => handleFilterChange(Filter.All)}
         >
           All
         </button>
         <button 
-          className={`${filter === active ? "active" : ""}`} 
-          onClick={() => handleFilterChange("active")}
+          className={filter === Filter.Active ? "active" : ""} 
+          onClick={() => handleFilterChange(Filter.Active)}
         >
           Active
         </button>
         <button 
-          className={filter == "completed" ? "active" : ""} 
-          onClick={() => handleFilterChange("completed")}
+          className={filter === Filter.Completed ? "active" : ""} 
+          onClick={() => handleFilterChange(Filter.Completed)}
         >
           Completed
         </button>
@@ -28,11 +40,10 @@ const TodoFilter = ({ filter, onFilter, onClearCompleted }) => {
       
       <button 
         className="clear-completed"
-        onClick={onClearCompleted()}
+        onClick={onClearCompleted}
       >
         Clear completed
       </button>
     </div>
   )
 }
-export default TodoFilter 

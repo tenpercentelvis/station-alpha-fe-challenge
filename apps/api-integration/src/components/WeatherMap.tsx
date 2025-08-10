@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { WeatherData } from '../App';
-import { getWeatherMapUrl } from '../services/weatherApi';
+import { getBaseMapUrl, getWeatherMapUrl, WeatherData } from '../services/weatherApi';
 
 interface WeatherMapProps {
   weatherData: WeatherData;
@@ -9,16 +8,17 @@ interface WeatherMapProps {
 
 const WeatherMap = ({ weatherData, onLocationSelect }: WeatherMapProps) => {
   const [mapType, setMapType] = useState<string>('precipitation');
-  const [zoom, setZoom] = useState<number>(10);
+  const [zoom, setZoom] = useState<number>(2);
   
   // Get coordinates from weatherData
   const lat = weatherData.location.lat;
   const lon = weatherData.location.lon;
   
-  // Generate map URL
+  // Generate map URLs
   const mapUrl = getWeatherMapUrl(lat, lon, zoom, mapType);
+  const baseMapUrl = getBaseMapUrl(lat, lon, zoom);
   
-  const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMapClick = () => {
     // This is a placeholder for map click handling
     // In a real implementation, you would calculate the lat/lon based on the click position
     // For this example, we'll just simulate a click near the center with slight offset
@@ -57,21 +57,44 @@ const WeatherMap = ({ weatherData, onLocationSelect }: WeatherMapProps) => {
         </div>
         
         <div className="zoom-controls">
-          <button onClick={() => setZoom(Math.min(zoom + 1, 18))}>+</button>
           <button onClick={() => setZoom(Math.max(zoom - 1, 3))}>-</button>
+          <button onClick={() => setZoom(Math.min(zoom + 1, 18))}>+</button>
         </div>
       </div>
       
       <div className="map-container" onClick={handleMapClick}>
-        {/* This is a placeholder for an actual map implementation */}
-        {/* In a real implementation, you would use a mapping library like Leaflet or Google Maps */}
-        <img 
-          src={mapUrl} 
-          alt={`${mapType} map for ${weatherData.location.name}`} 
-          className="map-image" 
-        />
-        <div className="map-overlay">
-          <p className="map-instructions">Click on the map to get weather for a specific location</p>
+        {/* Base map tile */}
+        <div className="map-base" style={{
+          backgroundImage: `url(${baseMapUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          position: 'relative',
+          width: '100%',
+          height: '300px'
+        }}>
+          {/* Weather overlay on top of base map */}
+          <img 
+            src={mapUrl} 
+            alt={`${mapType} overlay for ${weatherData.location.name}`} 
+            className="weather-overlay"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0.7,
+              pointerEvents: 'none'
+            }}
+            onError={(e) => {
+              // Hide overlay if it fails to load or is empty
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <div className="map-overlay-info">
+            <p className="map-instructions">Click on the map to get weather for a specific location</p>
+            <p className="map-location">{weatherData.location.name}, {weatherData.location.country}</p>
+          </div>
         </div>
       </div>
       

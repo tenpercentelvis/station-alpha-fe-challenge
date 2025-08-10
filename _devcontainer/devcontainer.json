@@ -1,0 +1,41 @@
+{
+  "name": "Playwright — Works Now",
+  "image": "mcr.microsoft.com/playwright:v1.51.1-jammy",
+
+  // Run as root to avoid node_modules permission issues
+  "remoteUser": "root",
+
+  // STOP the one-shot login shell that kills the container
+  "userEnvProbe": "none",
+  "overrideCommand": true,
+  "containerCmd": ["bash", "-lc", "while sleep 3600; do :; done"],
+
+  // Playwright stability
+  "runArgs": ["--ipc=host", "--init"],
+
+  // Bind your repo (read/write)
+  "workspaceMount": "source=${localWorkspaceFolder},target=/usr/app,type=bind,consistency=cached",
+  "workspaceFolder": "/usr/app",
+
+  // Keep artifacts off your repo (optional)
+  "mounts": [
+    "type=volume,source=pw-test-results,target=/usr/app/test-results",
+    "type=volume,source=pw-html-report,target=/usr/app/playwright-report",
+    "type=tmpfs,target=/tmp"
+  ],
+
+  // Use browsers preinstalled in the image
+  "containerEnv": {
+    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": { "terminal.integrated.defaultProfile.linux": "bash" },
+      "extensions": ["ms-playwright.playwright", "esbenp.prettier-vscode"]
+    }
+  },
+
+  // Prove it works, then install deps
+  "postCreateCommand": "node -v && npx --yes playwright --version && npm install"
+}

@@ -330,6 +330,7 @@ button:focus-visible {
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
+  color: #333;
 }
 
 .map-type-selector button.active {

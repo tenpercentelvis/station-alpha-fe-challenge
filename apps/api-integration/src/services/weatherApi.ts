@@ -1,26 +1,88 @@
-import { WeatherData } from '../App';
 
-// TODO: Replace with your actual API key
-const API_KEY = 'YOUR_API_KEY';
+export interface WeatherData {
+  location: {
+    name: string;
+    country: string;
+    lat: number;
+    lon: number;
+  };
+  current: {
+    temp_c: number;
+    temp_f: number;
+    condition: {
+      text: string;
+      icon: string;
+      code: number;
+    };
+    wind_kph: number;
+    wind_dir: string;
+    humidity: number;
+    feelslike_c: number;
+    feelslike_f: number;
+    uv: number;
+  };
+  forecast?: {
+    forecastday: Array<{
+      date: string;
+      day: {
+        maxtemp_c: number;
+        mintemp_c: number;
+        condition: {
+          text: string;
+          icon: string;
+        };
+        daily_chance_of_rain: number;
+      };
+    }>;
+  };
+  alerts?: {
+    alert: Array<{
+      headline: string;
+      severity: string;
+      urgency: string;
+      areas: string;
+      desc: string;
+      effective: string;
+      expires: string;
+    }>;
+  };
+}
 
-// Base URL for Weather API (WeatherAPI.com used as an example)
+export interface SearchHistoryItem {
+  query: string;
+  timestamp: number;
+}
+
+export interface LocationSuggestion {
+  id: number;
+  name: string;
+  region: string;
+  country: string;
+  lat: number;
+  lon: number;
+  url: string;
+}
+
+const API_KEY = 'acc2b3873d024081bea200337250908';
 const BASE_URL = 'https://api.weatherapi.com/v1';
+
+const MAP_API_KEY = 'ad7d64bab93c7dd947831dd5547b91c5';
+const MAP_BASE_URL = 'https://tile.openweathermap.org/map';
 
 /**
  * Get current weather data for a location
  * @param location - City name, zip code, or coordinates
  * @returns Promise with weather data
+ * ?INFO - This is not used in the app, but is here for future reference
  */
 export const getCurrentWeather = async (location: string): Promise<WeatherData> => {
   try {
-    // TODO: Implement API call to get current weather
-    // Example: 
-    // const response = await fetch(`${BASE_URL}/current.json?key=${API_KEY}&q=${location}`);
-    // if (!response.ok) throw new Error('Weather data not found');
-    // const data = await response.json();
-    // return transformWeatherData(data);
+    const response = await fetch(`${BASE_URL}/current.json?key=${API_KEY}&q=${encodeURIComponent(location)}&aqi=no`);
+    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
     
-    throw new Error('getCurrentWeather not implemented');
+    const rawData = await response.json();
+    const transformedData = transformWeatherData(rawData);
+    return transformedData;
   } catch (error) {
     console.error('Error fetching current weather:', error);
     throw error;
@@ -34,15 +96,28 @@ export const getCurrentWeather = async (location: string): Promise<WeatherData> 
  * @returns Promise with weather forecast data
  */
 export const getWeatherForecast = async (location: string, days: number = 5): Promise<WeatherData> => {
+  // Create cache key from location and days
+  const cacheKey = `weather_${location}_${days}`;
+  
+  // Check cache first
+  const cachedData = getCachedWeatherData(cacheKey);
+  
+  if (cachedData) {
+    console.log('Using cached weather data for:', location);
+    return cachedData;
+  }
+  
   try {
-    // TODO: Implement API call to get weather forecast
-    // Example:
-    // const response = await fetch(`${BASE_URL}/forecast.json?key=${API_KEY}&q=${location}&days=${days}`);
-    // if (!response.ok) throw new Error('Weather forecast not found');
-    // const data = await response.json();
-    // return transformWeatherData(data);
+    const response = await fetch(`${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=${days}&aqi=no&alerts=yes`);
+    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
     
-    throw new Error('getWeatherForecast not implemented');
+    const rawData = await response.json();
+    const transformedData = transformWeatherData(rawData);
+    
+    // Cache the result
+    cacheWeatherData(cacheKey, transformedData);
+    
+    return transformedData;
   } catch (error) {
     console.error('Error fetching weather forecast:', error);
     throw error;
@@ -53,17 +128,16 @@ export const getWeatherForecast = async (location: string, days: number = 5): Pr
  * Get weather alerts for a location
  * @param location - City name, zip code, or coordinates
  * @returns Promise with weather alerts data
+ * ?INFO - This is not used in the app, but is here for future reference
  */
 export const getWeatherAlerts = async (location: string): Promise<WeatherData> => {
   try {
-    // TODO: Implement API call to get weather alerts
-    // Example:
-    // const response = await fetch(`${BASE_URL}/forecast.json?key=${API_KEY}&q=${location}&alerts=yes`);
-    // if (!response.ok) throw new Error('Weather alerts not found');
-    // const data = await response.json();
-    // return transformWeatherData(data);
+    const response = await fetch(`${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&alerts=yes`);
+    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
     
-    throw new Error('getWeatherAlerts not implemented');
+    const rawData = await response.json();
+    const transformedData = transformWeatherData(rawData);
+    return transformedData;
   } catch (error) {
     console.error('Error fetching weather alerts:', error);
     throw error;
@@ -75,15 +149,31 @@ export const getWeatherAlerts = async (location: string): Promise<WeatherData> =
  * @param query - Partial location name
  * @returns Promise with location suggestions
  */
-export const searchLocations = async (query: string): Promise<any[]> => {
+export const searchLocations = async (query: string): Promise<LocationSuggestion[]> => {
   try {
-    // TODO: Implement API call to search locations
-    // Example:
-    // const response = await fetch(`${BASE_URL}/search.json?key=${API_KEY}&q=${query}`);
-    // if (!response.ok) throw new Error('Location search failed');
-    // return response.json();
+    if (!query.trim() || query.length < 2) return [];
     
-    throw new Error('searchLocations not implemented');
+    // Create cache key for search query
+    const cacheKey = `search_${query.toLowerCase()}`;
+    
+    // Check cache
+    const cachedData = getCachedWeatherData(cacheKey);
+
+    if (cachedData) {
+      console.log('Using cached search results for:', query);
+      return cachedData;
+    }
+    
+    const response = await fetch(`${BASE_URL}/search.json?key=${API_KEY}&q=${encodeURIComponent(query)}`);
+    if (!response.ok) throw new Error('Location search failed');
+    
+    const data = await response.json();
+    const results = data || [];
+    
+    // Cache the results
+    cacheWeatherData(cacheKey, results);
+    
+    return results;
   } catch (error) {
     console.error('Error searching locations:', error);
     throw error;
@@ -96,10 +186,8 @@ export const searchLocations = async (query: string): Promise<any[]> => {
  * @returns Transformed WeatherData object
  */
 const transformWeatherData = (data: any): WeatherData => {
-  // TODO: Implement data transformation from API response to WeatherData format
-  // This will depend on the specific API you choose
-  
-  // Example placeholder implementation:
+  // Transform raw API response to ensure consistent data structure with fallback values
+
   return {
     location: {
       name: data.location?.name || 'Unknown',
@@ -151,6 +239,19 @@ const transformWeatherData = (data: any): WeatherData => {
 };
 
 /**
+ * Convert lat/lon to tile coordinates for OpenWeatherMap
+ * @param lat - Latitude
+ * @param lon - Longitude
+ * @param zoom - Zoom level
+ * @returns Object with x and y tile coordinates
+ */
+const latLonToTile = (lat: number, lon: number, zoom: number) => {
+  const x = Math.floor((lon + 180) / 360 * Math.pow(2, zoom));
+  const y = Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
+  return { x, y };
+};
+
+/**
  * Get map URL for a location
  * @param lat - Latitude
  * @param lon - Longitude
@@ -158,15 +259,21 @@ const transformWeatherData = (data: any): WeatherData => {
  * @param type - Map type (e.g., 'precipitation', 'temp', 'wind')
  * @returns Map URL string
  */
-export const getWeatherMapUrl = (lat: number, lon: number, zoom: number = 10, type: string = 'precipitation'): string => {
-  // TODO: Implement weather map URL generation
-  // This will depend on the specific mapping service you choose
-  
-  // Example placeholder implementation using OpenWeatherMap (you'll need a separate API key):
-  // return `https://tile.openweathermap.org/map/${type}/${zoom}/${lat}/${lon}.png?appid=${API_KEY}`;
-  
-  // For now, return a placeholder:
-  return `https://placekitten.com/500/300?lat=${lat}&lon=${lon}&zoom=${zoom}&type=${type}`;
+export const getWeatherMapUrl = (lat: number, lon: number, zoom: number = 2, type: string = 'precipitation'): string => {
+  const { x, y } = latLonToTile(lat, lon, zoom);
+  return `${MAP_BASE_URL}/${type}/${zoom}/${x}/${y}.png?appid=${MAP_API_KEY}`;
+};
+
+/**
+ * Get base map tile URL for OpenStreetMap
+ * @param lat - Latitude
+ * @param lon - Longitude
+ * @param zoom - Zoom level (1-18)
+ * @returns OpenStreetMap tile URL
+ */
+export const getBaseMapUrl = (lat: number, lon: number, zoom: number = 2): string => {
+  const { x, y } = latLonToTile(lat, lon, zoom);
+  return `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
 };
 
 /**
@@ -177,10 +284,12 @@ export const getWeatherMapUrl = (lat: number, lon: number, zoom: number = 10, ty
  */
 export const cacheWeatherData = (key: string, data: any, expirationMinutes: number = 30): void => {
   const now = new Date();
+
   const item = {
     data,
     expiry: now.getTime() + expirationMinutes * 60 * 1000,
   };
+
   localStorage.setItem(key, JSON.stringify(item));
 };
 
@@ -191,13 +300,16 @@ export const cacheWeatherData = (key: string, data: any, expirationMinutes: numb
  */
 export const getCachedWeatherData = (key: string): any | null => {
   const itemStr = localStorage.getItem(key);
+
   if (!itemStr) return null;
   
   const item = JSON.parse(itemStr);
+
   const now = new Date();
   
   if (now.getTime() > item.expiry) {
     localStorage.removeItem(key);
+
     return null;
   }
   

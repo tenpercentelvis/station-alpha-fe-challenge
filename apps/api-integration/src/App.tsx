@@ -1,74 +1,57 @@
-import { useState } from 'react'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
+import CurrentWeather from './components/CurrentWeather';
+import Forecast from './components/Forecast';
+import SearchBar from './components/SearchBar';
+import WeatherAlerts from './components/WeatherAlerts';
+import WeatherMap from './components/WeatherMap';
+import {
+  getWeatherForecast,
+  SearchHistoryItem,
+  WeatherData
+} from './services/weatherApi';
 
-// Types for weather data
-export interface WeatherData {
-  location: {
-    name: string;
-    country: string;
-    lat: number;
-    lon: number;
-  };
-  current: {
-    temp_c: number;
-    temp_f: number;
-    condition: {
-      text: string;
-      icon: string;
-      code: number;
-    };
-    wind_kph: number;
-    wind_dir: string;
-    humidity: number;
-    feelslike_c: number;
-    feelslike_f: number;
-    uv: number;
-  };
-  forecast?: {
-    forecastday: Array<{
-      date: string;
-      day: {
-        maxtemp_c: number;
-        mintemp_c: number;
-        condition: {
-          text: string;
-          icon: string;
-        };
-        daily_chance_of_rain: number;
-      };
-    }>;
-  };
-  alerts?: {
-    alert: Array<{
-      headline: string;
-      severity: string;
-      urgency: string;
-      areas: string;
-      desc: string;
-      effective: string;
-      expires: string;
-    }>;
-  };
-}
-
-// Type for search history
-export interface SearchHistoryItem {
-  query: string;
-  timestamp: number;
-}
-
-function App() {
-  // Weather data state
+const App = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  // Loading state
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // Error state
   const [error, setError] = useState<string | null>(null);
-  // Search query state
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  // Search history
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
-  
+
+  const handleSearch = async (location: string) => {
+    if (!location.trim()) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await getWeatherForecast(location, 5);
+      setWeatherData(data);
+    } catch (err: any) {
+      console.log('error', err);
+      setError('Could not load weather data, please try again');
+      setWeatherData(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addToSearchHistory = (query: string) => {
+    const newSearchItem: SearchHistoryItem = { 
+      query: query, 
+      timestamp: Date.now() 
+    };
+    
+    const currentHistory = searchHistory;
+    const updatedHistory = [newSearchItem, ...currentHistory.slice(0, 2)];
+    setSearchHistory(updatedHistory);
+  };
+
+  useEffect(() => {
+    console.log(weatherData?.current);
+    console.log(weatherData?.forecast);
+    console.log(searchHistory);
+  }, [weatherData]);
+
   return (
     <div className="weather-app">
       <header className="app-header">
@@ -123,53 +106,46 @@ function App() {
         <section className="implementation-area">
           <h2>Your Implementation</h2>
           
-          {/* Search Component Placeholder */}
-          <div className="search-container">
-            <input 
-              type="text" 
-              placeholder="Search for a city..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button>Search</button>
-          </div>
+          <SearchBar 
+            onSearch={handleSearch}
+            searchHistory={searchHistory}
+            addToSearchHistory={addToSearchHistory}
+          />
 
-          {/* Weather Display Placeholders */}
-          <div className="weather-display">
-            {isLoading && <div className="loading">Loading weather data...</div>}
+          <div className="weather-display" role="region" aria-label="Weather information">
+            {isLoading && <div className="loading" role="status" aria-live="polite">Loading weather data...</div>}
             
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className="error-message" role="alert" aria-live="assertive">{error}</div>}
             
             {!isLoading && !error && !weatherData && (
-              <div className="no-data">
+              <div className="no-data" role="status" aria-live="polite">
                 Search for a location to see weather information
               </div>
             )}
             
             {weatherData && (
               <div className="weather-content">
-                {/* Current Weather Placeholder */}
                 <div className="current-weather">
-                  <h3>Current Weather Placeholder</h3>
-                  <p>Implement the current weather display here</p>
+                  <CurrentWeather weatherData={weatherData} />
                 </div>
-                
-                {/* Forecast Placeholder */}
+
                 <div className="forecast">
-                  <h3>Forecast Placeholder</h3>
-                  <p>Implement the 5-day forecast here</p>
+                  <Forecast weatherData={weatherData} />
                 </div>
                 
-                {/* Weather Map Placeholder */}
                 <div className="weather-map">
-                  <h3>Weather Map Placeholder</h3>
-                  <p>Implement the weather map here</p>
+                  <WeatherMap 
+                    weatherData={weatherData} 
+                    onLocationSelect={(lat, lon) => {
+                      // Convert coordinates to a location string and search
+                      const locationString = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+                      handleSearch(locationString);
+                    }} 
+                  />
                 </div>
                 
-                {/* Alerts Placeholder */}
                 <div className="weather-alerts">
-                  <h3>Weather Alerts Placeholder</h3>
-                  <p>Implement weather alerts here</p>
+                  <WeatherAlerts weatherData={weatherData} />
                 </div>
               </div>
             )}
@@ -184,6 +160,6 @@ function App() {
       </footer>
     </div>
   );
-}
+};
 
 export default App;

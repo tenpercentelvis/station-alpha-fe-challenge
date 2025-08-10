@@ -1,10 +1,17 @@
 import { useState } from 'react'
 
-const TodoForm = ({ onAdd }) => {
-  const [input, setInput] = useState(0)
+type TodoFormProps = {
+  onAdd: (input: string) => void
+}
 
-  const handleSubmit = (e) => {
+export const TodoForm = ({ onAdd }: TodoFormProps) => {
+  const [input, setInput] = useState<string>('')
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    
     onAdd(input)
+    setInput('')
   }
 
   return (
@@ -12,12 +19,10 @@ const TodoForm = ({ onAdd }) => {
       <input
         type="text"
         value={input}
-        onChange={setInput(e.target.value)}
+        onChange={(event) => setInput(event.target.value)}
         placeholder="Add a new todo"
       />
       <button type="submit">Add Todo</button>
     </form>
   )
 }
-
-export default TodoForm 

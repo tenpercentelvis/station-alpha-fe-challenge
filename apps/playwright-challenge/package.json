@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
+    "dev:isolated": "vite --host 0.0.0.0 --port 3677",
     "build": "vite build",
     "serve": "vite preview",
     "test": "playwright test",
+    "test:watch": "nodemon",
     "test:ui": "playwright test --ui"
   },
   "dependencies": {
@@ -15,11 +17,12 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.35.0",
+    "@playwright/test": "^1.51.1",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
+    "nodemon": "^3.1.10",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
   }
-} 
+}

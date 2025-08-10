@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import UserTable from './components/UserTable';
-import ErrorModal from './components/ErrorModal';
-import { fetchUsers } from './services/api';
-import { User } from './types/user';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import ErrorModal from "./components/ErrorModal";
+import UserTable from "./components/UserTable";
+import { fetchUsers } from "./services/api";
+import { User } from "./types/user";
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,8 +18,8 @@ const App: React.FC = () => {
         setUsers(data);
         setError(null);
       } catch (err) {
-        setError('Failed to load users. Please try again later.');
-        console.error('Error loading users:', err);
+        setError("Failed to load users. Please try again later.");
+        console.error("Error loading users:", err);
       } finally {
         setLoading(false);
       }
@@ -58,4 +58,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App; 
+export default App;
